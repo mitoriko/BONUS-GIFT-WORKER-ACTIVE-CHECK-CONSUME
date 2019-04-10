@@ -40,5 +40,12 @@ namespace QuartzRedis
         public string orderId;
         public string state;
         public string taskState;
+        public string phone;
+    }
+
+    public class SmsCodeRes
+    {
+        public int error_code;
+        public string reason;
     }
 }

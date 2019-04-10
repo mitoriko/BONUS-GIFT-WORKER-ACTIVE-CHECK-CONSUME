@@ -22,6 +22,7 @@ namespace QuartzRedis.Dao
                     orderId = dt.Rows[0]["ORDER_ID"].ToString(),
                     state = dt.Rows[0]["STATE"].ToString(),
                     taskState = dt.Rows[0]["TASK_STATE"].ToString(),
+                    phone = dt.Rows[0]["REG_PHONE"].ToString(),
                 };
                 return order;
             }
@@ -71,9 +72,12 @@ namespace QuartzRedis.Dao
     public class TaskJobSqls
     {
         public const string SELECT_ORDER = ""
-            + "SELECT * "
-            + "FROM T_BUSS_ORDER "
-            + "WHERE ORDER_ID = {0} ";
+            + "SELECT ORDER_ID, STATE, TASK_STATE, REG_PHONE "
+            + "FROM T_BUSS_ORDER A,T_BASE_STORE B, T_BUSS_MEMBER_STORE C "
+            + "WHERE ORDER_ID = {0} "
+            + "AND A.STORE_CODE = B.STORE_CODE "
+            + "AND C.MEMBER_ID = A.MEMBER_ID "
+            + "AND C.STORE_ID = B.STORE_ID ";
         public const string SELECT_ORDER_GOODS_STATE = ""
             + "SELECT * "
             + "FROM T_BUSS_ORDER_GOODS A, T_BUSS_ORDER B "

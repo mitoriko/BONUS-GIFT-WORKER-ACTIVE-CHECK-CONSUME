@@ -1,4 +1,5 @@
-﻿using QuartzRedis.Common;
+﻿using Newtonsoft.Json;
+using QuartzRedis.Common;
 using QuartzRedis.Dao;
 using StackExchange.Redis;
 using System;
@@ -21,7 +22,19 @@ namespace QuartzRedis.Buss
 
             if(taskJobDao.checkOrderGoodsState(ids))
             {
-                taskJobDao.Done(ids);
+                if(taskJobDao.Done(ids))
+                {
+                    StringBuilder builder = new StringBuilder();
+                    builder.AppendFormat(Global.SMS_CODE_URL, Global.SMS_CODE, Global.SMS_TPL, order.phone);
+                    string url = builder.ToString();
+                    string res = Utils.GetHttp(url);
+
+                    SmsCodeRes smsCodeRes = JsonConvert.DeserializeObject<SmsCodeRes>(res);
+                    if (smsCodeRes == null || smsCodeRes.error_code != 0)
+                    {
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "> " + "发送短信失败原因:" + smsCodeRes.reason);
+                    }
+                }
             }
             else
             {
