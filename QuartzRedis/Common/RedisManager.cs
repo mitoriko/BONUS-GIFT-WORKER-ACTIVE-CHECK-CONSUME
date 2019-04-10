@@ -7,7 +7,7 @@ namespace QuartzRedis.Common
 {
     public class RedisManager
     {
-        private static ConfigurationOptions connDCS = ConfigurationOptions.Parse("www.a-cubic.com:16379");
+        private static ConfigurationOptions connDCS;
 
         private static readonly object Locker = new object();
 
@@ -17,6 +17,7 @@ namespace QuartzRedis.Common
         {
             if (redisConn == null)
             {
+                connDCS = ConfigurationOptions.Parse(Global.Redis);
                 lock (Locker)
                 {
                     if (redisConn == null || !redisConn.IsConnected)
