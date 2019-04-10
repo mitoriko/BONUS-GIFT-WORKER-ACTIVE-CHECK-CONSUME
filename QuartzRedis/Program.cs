@@ -8,6 +8,7 @@ namespace QuartzRedis
     {
         static void Main(string[] args)
         {
+            Global.Startup();
             TaskJob.Worker();
             TaskJob.Subscribe();
             Console.ReadLine();
