@@ -12,7 +12,7 @@ namespace QuartzRedis.Common
         public const string ENV = "PRO";
         public const string GROUP = "Task-Gift";
 
-        public const string TASK_JOB = "GIFT-ORDER-1-2";
+        public const string TASK_JOB = "GIFT-CHECK-CONSUME-0-1";
 
         public const string TASK_PREFIX = "Task";
 
@@ -21,7 +21,6 @@ namespace QuartzRedis.Common
 
         public const string TOPIC_MESSAGE = "update";
 
-        public const string SMS_CODE_URL = "http://v.juhe.cn/sms/send?mobile={2}&tpl_id={1}&tpl_value=&dtype=&key={0}";
         public const int REDIS_DB = 11;
 
         static Action<ChannelMessage> action = new Action<ChannelMessage>(onMessageHandle);
@@ -137,22 +136,6 @@ namespace QuartzRedis.Common
             get
             {
                 return Environment.GetEnvironmentVariable("DBPassword");
-            }
-        }
-
-        public static string SMS_CODE
-        {
-            get
-            {
-                return Environment.GetEnvironmentVariable("SmsCode");
-            }
-        }
-
-        public static string SMS_TPL
-        {
-            get
-            {
-                return Environment.GetEnvironmentVariable("SmsTpl");
             }
         }
     }
