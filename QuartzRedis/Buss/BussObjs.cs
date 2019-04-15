@@ -35,17 +35,45 @@ namespace QuartzRedis
         public string msg;
     }
 
-    public class Order
+    public class MemberCheckStore
     {
-        public string orderId;
-        public string state;
-        public string taskState;
-        public string phone;
+        public string storeId;
+        public string memberId;
+        public DateTime checkTime;
+        public string consume;
     }
 
-    public class SmsCodeRes
+    public class Member
     {
-        public int error_code;
-        public string reason;
+        public string memberName;
+        public string memberId;
+        public string heart;
+        public string memberImg;
     }
+
+    public class ActiveItem
+    {
+        public string activeId;
+        public string actionType;
+        public string itemNums;
+        public string itemValue;
+        public string valueType;
+    }
+
+    public class Goods
+    {
+        public string goodsId;
+        public string goodsName;
+        public string goodsImg;
+        public double goodsPrice;
+        public int goodsStock;
+    }
+
+    public class Store
+    {
+        public string storeId;
+        public string storeCode;
+        public string storeAddr;
+    }
+
 }

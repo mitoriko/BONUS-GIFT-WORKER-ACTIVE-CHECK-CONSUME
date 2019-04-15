@@ -1,4 +1,5 @@
-﻿using QuartzRedis.Buss;
+﻿using Com.ACBC.Framework.Database;
+using QuartzRedis.Buss;
 using QuartzRedis.Common;
 using System;
 
