@@ -231,13 +231,15 @@ namespace QuartzRedis.Dao
             + "AND A.ACTIVE_ID = T.ACTIVE_ID "
             + "AND A.CONSUME <= {1} "
             + "AND T.ACTIVE_STORE = {0} "
+            + "AND T.ACTIVE_STATE = '1' "
             + "UNION "
             + "SELECT ITEM_NUMS,ITEM_VALUE,VALUE_TYPE,1 AS ACTION_TYPE,T.ACTIVE_ID "
             + "FROM T_BUSS_ACTIVE T,T_BUSS_ACTIVE_CHECK A "
             + "WHERE NOW() BETWEEN T.ACTIVE_TIME_FROM AND T.ACTIVE_TIME_TO "
             + "AND T.ACTIVE_TYPE = 1 "
             + "AND A.ACTIVE_ID = T.ACTIVE_ID "
-            + "AND T.ACTIVE_STORE = {0}";
+            + "AND T.ACTIVE_STORE = {0} "
+            + "AND T.ACTIVE_STATE = '1' ";
         public const string INSERT_LIMIT_ADD = ""
             + "INSERT INTO T_BUSS_STORE_LIMIT_ADD"
             + "(STORE_ID, MEMBER_ID, ACTION_VALUE, OPERATE_TIME, NUM, USE_DATE) "
