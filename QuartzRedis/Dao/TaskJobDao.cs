@@ -39,7 +39,14 @@ namespace QuartzRedis.Dao
             DataTable dt = DatabaseOperation.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
             {
-                foreach(DataRow dr in dt.Rows)
+                DataRow[] checkItem = dt.Select("ACTION_TYPE = 1");
+                DataRow[] consumeItem = dt.Select("ACTION_TYPE = 0", "CONSUME DESC");
+                int maxConsume = 0;
+                if(consumeItem.Length > 0)
+                {
+                    maxConsume = Convert.ToInt32(consumeItem[0]["CONSUME"]);
+                }
+                foreach (DataRow dr in checkItem)
                 {
                     ActiveItem activeItem = new ActiveItem()
                     {
@@ -51,12 +58,41 @@ namespace QuartzRedis.Dao
                     };
                     list.Add(activeItem);
                 }
+
+                foreach (DataRow dr in consumeItem)
+                {
+                    if(Convert.ToInt32(dr["CONSUME"]) == maxConsume)
+                    {
+                        ActiveItem activeItem = new ActiveItem()
+                        {
+                            itemNums = dr["ITEM_NUMS"].ToString(),
+                            actionType = dr["ACTION_TYPE"].ToString(),
+                            itemValue = dr["ITEM_VALUE"].ToString(),
+                            valueType = dr["VALUE_TYPE"].ToString(),
+                            activeId = dr["ACTIVE_ID"].ToString(),
+                        };
+                        list.Add(activeItem);
+                    }
+                }
+
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    ActiveItem activeItem = new ActiveItem()
+                //    {
+                //        itemNums = dr["ITEM_NUMS"].ToString(),
+                //        actionType = dr["ACTION_TYPE"].ToString(),
+                //        itemValue = dr["ITEM_VALUE"].ToString(),
+                //        valueType = dr["VALUE_TYPE"].ToString(),
+                //        activeId = dr["ACTIVE_ID"].ToString(),
+                //    };
+                //    list.Add(activeItem);
+                //}
             }
 
             return list;
         }
 
-        public bool LimitAdd(string storeId, string memberId, string actionValue, string num, string useDate)
+        public bool LimitAdd(string storeId, string memberId, string actionValue, string num, string useDate, string active_id)
         {
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(
@@ -65,7 +101,8 @@ namespace QuartzRedis.Dao
                 memberId,
                 actionValue,
                 num,
-                useDate);
+                useDate,
+                active_id);
             string sql = builder.ToString();
             return DatabaseOperation.ExecuteDML(sql);
         }
@@ -224,7 +261,7 @@ namespace QuartzRedis.Dao
         public const string SELECT_MEMBER_CHECK_STORE = ""
             + "SELECT * FROM T_BUSS_MEMBER_CHECK_STORE WHERE MEMBER_CHECK_STORE_ID = {0}";
         public const string SELECT_ACTIVE_ITEM = ""
-            + "SELECT ITEM_NUMS,ITEM_VALUE,VALUE_TYPE,0 AS ACTION_TYPE,T.ACTIVE_ID "
+            + "SELECT ITEM_NUMS,ITEM_VALUE,VALUE_TYPE,0 AS ACTION_TYPE,T.ACTIVE_ID,A.CONSUME AS CONSUME "
             + "FROM T_BUSS_ACTIVE T,T_BUSS_ACTIVE_CONSUME A "
             + "WHERE NOW() BETWEEN T.ACTIVE_TIME_FROM AND T.ACTIVE_TIME_TO "
             + "AND T.ACTIVE_TYPE = 0 "
@@ -233,7 +270,7 @@ namespace QuartzRedis.Dao
             + "AND T.ACTIVE_STORE = {0} "
             + "AND T.ACTIVE_STATE = '1' "
             + "UNION "
-            + "SELECT ITEM_NUMS,ITEM_VALUE,VALUE_TYPE,1 AS ACTION_TYPE,T.ACTIVE_ID "
+            + "SELECT ITEM_NUMS,ITEM_VALUE,VALUE_TYPE,1 AS ACTION_TYPE,T.ACTIVE_ID,0 AS CONSUME "
             + "FROM T_BUSS_ACTIVE T,T_BUSS_ACTIVE_CHECK A "
             + "WHERE NOW() BETWEEN T.ACTIVE_TIME_FROM AND T.ACTIVE_TIME_TO "
             + "AND T.ACTIVE_TYPE = 1 "
@@ -242,8 +279,8 @@ namespace QuartzRedis.Dao
             + "AND T.ACTIVE_STATE = '1' ";
         public const string INSERT_LIMIT_ADD = ""
             + "INSERT INTO T_BUSS_STORE_LIMIT_ADD"
-            + "(STORE_ID, MEMBER_ID, ACTION_VALUE, OPERATE_TIME, NUM, USE_DATE) "
-            + "VALUES({0},{1},{2},NOW(),{3},'{4}')";
+            + "(STORE_ID, MEMBER_ID, ACTION_VALUE, OPERATE_TIME, NUM, USE_DATE, ACTIVE_ID) "
+            + "VALUES({0},{1},{2},NOW(),{3},'{4}',{5})";
         public const string SELECT_MEMBER_HEART_BY_MEMBER_ID = ""
             + "SELECT * "
             + "FROM T_BASE_MEMBER "

@@ -69,20 +69,25 @@ namespace QuartzRedis.Buss
                                 }
                                 break;
                             case "2":
-                                int totalLimit = Convert.ToInt32(item.itemValue) * Convert.ToInt32(item.itemNums);
-                                if (taskJobDao.LimitAdd(
-                                    store.storeId,
-                                    member.memberId,
-                                    item.actionType,
-                                    totalLimit.ToString(),
-                                    memberCheckStore.checkTime.ToString("yyyyMMdd")))
+                                if((Convert.ToInt32(memberCheckStore.consume) == 0 && item.actionType == "1") || (Convert.ToInt32(memberCheckStore.consume) > 0 && item.actionType == "0"))
                                 {
-                                    taskJobDao.Done(ids);
+                                    int totalLimit = Convert.ToInt32(item.itemValue) * Convert.ToInt32(item.itemNums);
+                                    if (taskJobDao.LimitAdd(
+                                        store.storeId,
+                                        member.memberId,
+                                        item.actionType,
+                                        totalLimit.ToString(),
+                                        memberCheckStore.checkTime.ToString("yyyyMMdd"),
+                                        item.activeId))
+                                    {
+                                        taskJobDao.Done(ids);
+                                    }
+                                    else
+                                    {
+                                        taskJobDao.Error(ids);
+                                    }
                                 }
-                                else
-                                {
-                                    taskJobDao.Error(ids);
-                                }
+                                
                                 break;
                             default:
                                 break;
